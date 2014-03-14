@@ -1,0 +1,46 @@
+= content_for :head do
+  -if protect_against_forgery?
+    %script
+      ="var AUTH_TOKEN = #{form_authenticity_token.inspect};"
+
+#card_notice
+- if @cards.present?
+  #card_options
+    = radio_button_tag 'use_existing_card', 'yes', true
+    %label{for: "use_existing_card_yes"} Use an existing card on file
+    %br/
+    = radio_button_tag 'use_existing_card', 'no'
+    %label{for: "use_existing_card_no"} Use a new card
+  #existing_cards
+    :javascript
+      $(document).ready(function () {
+        useExistingCardsInit();
+        creditCardDeleteCallback = paymentPageResetCreditCardOptions;
+      });
+    %p.field{"data-hook" => "existing_cards"}
+    %h4 Existing Cards
+    %table.existing-credit-card-list
+      %thead
+        %tr
+          %th Card Number (last four)
+          %th Expiration Month
+          %th Expiration Year
+          %th Use?
+          %th
+      %tbody
+        - @cards.each do |card|
+          %tr
+            %td{:class => cycle('even', 'odd'), :id => dom_id(card,'spree')}
+              - unless (cc_type = card.cc_type).blank?
+                = image_tag "credit_cards/icons/#{cc_type}.png"
+              Ending in
+              ="#{card.last_digits}"
+            %td= card.month
+            %td= card.year
+            %td= radio_button_tag "existing_card", "#{card.id}", "#{(@cards.size ==1)}"
+            %td
+              = link_to spree.credit_card_url(card), :remote => true, :method => :delete, :confirm => 'Are you sure?' do
+                =image_tag("icons/delete.png")
+                Remove
+                        
+

@@ -2,7 +2,7 @@
 //= require_self
 
 var creditCardDeleteCallback=$.noop();
-
+var original_button_text = "Save and Continue";
 function displayCreditCardDeleteStatus(notice) {
   notice_div = $('.flash.notice');
 
@@ -104,6 +104,9 @@ function useExistingCardsInit() {
 function disableContinueButton() {
   if ($("#existing_cards input[type=radio]:checked").length == 0) {
     // temporarily rename & disable the save button if no cards are selected
+    if (original_button_text == "") {
+      original_button_text = $(".form-buttons input[type=submit]").val();
+    }
     $(".form-buttons input[type=submit]").attr('disabled',true);
     $(".form-buttons input[type=submit]").val('Please Select a Card to Use');
   }
