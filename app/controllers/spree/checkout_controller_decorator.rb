@@ -7,14 +7,8 @@ module Spree
     private
 
     def before_payment
-      packages = @order.shipments.map { |s| s.to_package }
-      @differentiator = Spree::Stock::Differentiator.new(@order, packages)
-      @differentiator.missing.each do |variant, quantity|
-        @order.contents.remove(variant, quantity)
-      end
-
       current_order.payments.destroy_all if request.put?
-      @cards = all_cards_for_user(@order.user)
+      @cards = @order.user.credit_cards.available if @order.user.present?
     end
 
     # we are overriding this method in order to substitue in the exisiting card information

@@ -18,7 +18,6 @@ module CardReuse
   def card_expired?(payment_source)
     exp = DateTime.new(payment_source.year.to_i, payment_source.month.to_i).end_of_month
     now = DateTime.now.end_of_month
-
     exp < now
   end
 
